@@ -1,3 +1,4 @@
+
 name: Compilador HYUNDAI OS
 
 on:
@@ -22,11 +23,10 @@ jobs:
           java-version: '17'
 
       - name: Preparar Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Instalar herramientas Android
         run: |
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" --licenses || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Preparar Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -39,10 +39,10 @@ jobs:
 
       - name: Compilar APK
         run: |
-          gradle -p proyecto assembleDebug
+          gradle -p proyecto/HYUNDAI_OS_ANDROID assembleDebug
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: HYUNDAI-OS-APK
-          path: proyecto/app/build/outputs/apk/debug/app-debug.apk
+          path: proyecto/HYUNDAI_OS_ANDROID/app/build/outputs/apk/debug/app-debug.apk
